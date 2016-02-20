@@ -6,6 +6,10 @@ threadsafe: yes
 
 handlers:       # static then dynamic
 
+- url: /crons/set_announcement
+  script: main.app
+  login: admin
+
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
