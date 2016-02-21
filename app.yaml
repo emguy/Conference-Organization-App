@@ -6,6 +6,10 @@ threadsafe: yes
 
 handlers:       # static then dynamic
 
+- url: /tasks/send_confirmation_email
+  script: main.app
+  login: admin
+
 - url: /crons/set_announcement
   script: main.app
   login: admin

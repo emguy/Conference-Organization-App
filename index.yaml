@@ -27,3 +27,8 @@ indexes:
   - name: city
   - name: topics
   - name: name
+
+- kind: Conference
+  properties:
+  - name: seatsAvailable
+  - name: name

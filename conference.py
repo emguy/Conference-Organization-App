@@ -25,6 +25,8 @@ from protorpc import remote
 
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
+from google.appengine.api import memcache
+from google.appengine.api import taskqueue
 
 from models import Profile
 from models import ProfileMiniForm
@@ -42,7 +44,6 @@ from models import StringMessage
 from settings import WEB_CLIENT_ID
 from  utils import getUserId
 
-from google.appengine.api import memcache
 
 DEFAULTS = {
     "city": "Default City",
@@ -74,6 +75,7 @@ CONF_GET_REQUEST = endpoints.ResourceContainer(
 
 EMAIL_SCOPE = endpoints.EMAIL_SCOPE
 API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
+MEMCACHE_ANNOUNCEMENTS_KEY = "RECENT_ANNOUNCEMENTS"
 
 # needed for conference registration
 class BooleanMessage(messages.Message):
@@ -210,6 +212,10 @@ class ConferenceApi(remote.Service):
 
     # create Conference & return (modified) ConferenceForm
     Conference(**data).put()
+    taskqueue.add(params={'email': user.email(),
+        'conferenceInfo': repr(request)},
+        url='/tasks/send_confirmation_email'
+    )
 
     return request
 
@@ -465,10 +471,12 @@ class ConferenceApi(remote.Service):
           http_method='GET', name='getAnnouncement')
   def getAnnouncement(self, request):
     """Return Announcement from memcache."""
+    self._cacheAnnouncement()
     # TODO 1
     # return an existing announcement from Memcache or an empty string.
     announcement = memcache.get(MEMCACHE_ANNOUNCEMENTS_KEY)
-    announcement = ""
+    if not announcement:
+        announcement = ""
     return StringMessage(data=announcement)
 
 # registers API
