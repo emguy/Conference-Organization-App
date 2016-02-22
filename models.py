@@ -31,6 +31,10 @@ class SessionForm(messages.Message):
   date            = messages.StringField(6)
   startTime       = messages.StringField(7)
 
+class SessionForms(messages.Message):
+  """SessionForms -- multiple Session outbound form message"""
+  items = messages.MessageField(SessionForm, 1, repeated=True)
+
 class SessionType(messages.Enum):
   """SessionType -- session type enumeration value"""
   NOT_SPECIFIED = 0
