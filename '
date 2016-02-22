@@ -17,7 +17,7 @@ class Session(ndb.Model):
   highlights      = ndb.StringProperty()
   speaker         = ndb.StringProperty()
   duration        = ndb.IntegerProperty()
-  typeOfSession   = ndb.StringProperty(default="PAPER")
+  typeOfSession   = ndb.StringProperty(default="******")
   Date            = ndb.DateProperty()
   startTime       = ndb.TimeProperty()
 
@@ -31,14 +31,12 @@ class SessionForm(ndb.Model):
   Date            = messages.StringField(6)
   startTime       = messages.StringField(7)
 
-class SessionType(messages.Enum):
-  """SessionType -- session type enumeration value"""
-  PAPER = 1
-  PANEL = 2
-  POSTER = 3
-  WORKSHOP = 4
-  LECURE = 5
-  KEYNOTE = 6
+
+
+
+
+
+
 
 class ConflictException(endpoints.ServiceException):
   """ConflictException -- exception mapped to HTTP 409 response"""
