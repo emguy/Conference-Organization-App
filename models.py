@@ -16,23 +16,24 @@ class Session(ndb.Model):
   name            = ndb.StringProperty(required=True)
   highlights      = ndb.StringProperty()
   speaker         = ndb.StringProperty()
-  duration        = ndb.IntegerProperty()
-  typeOfSession   = ndb.StringProperty(default="PAPER")
-  Date            = ndb.DateProperty()
+  typeOfSession   = ndb.StringProperty(default="NOT_SPECIFIED")
+  date            = ndb.DateProperty()
   startTime       = ndb.TimeProperty()
+  endTime         = ndb.TimeProperty()
 
-class SessionForm(ndb.Model):
+class SessionForm(messages.Message):
   """SessionForm -- Session outbound form message"""
   name            = messages.StringField(1)
   highlights      = messages.StringField(2)
   speaker         = messages.StringField(3)
   duration        = messages.IntegerField(4, variant=messages.Variant.INT32)
   typeOfSession   = messages.EnumField("SessionType", 5)
-  Date            = messages.StringField(6)
+  date            = messages.StringField(6)
   startTime       = messages.StringField(7)
 
 class SessionType(messages.Enum):
   """SessionType -- session type enumeration value"""
+  NOT_SPECIFIED = 0
   PAPER = 1
   PANEL = 2
   POSTER = 3
