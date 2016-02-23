@@ -30,6 +30,7 @@ class SessionForm(messages.Message):
   typeOfSession   = messages.EnumField("SessionType", 5)
   date            = messages.StringField(6)
   startTime       = messages.StringField(7)
+  wssk            = messages.StringField(8) # <<<<<<<<<<<<<<<<<<<<<< TESTING
 
 class SessionForms(messages.Message):
   """SessionForms -- multiple Session outbound form message"""
@@ -63,6 +64,7 @@ class Profile(ndb.Model):
   mainEmail = ndb.StringProperty()
   teeShirtSize = ndb.StringProperty(default="NOT_SPECIFIED")
   conferenceKeysToAttend = ndb.StringProperty(repeated=True)
+  wishlist = ndb.StringProperty(repeated=True)
 
 class ProfileMiniForm(messages.Message):
   """ProfileMiniForm -- update Profile form message"""

@@ -38,3 +38,10 @@ indexes:
   - name: speaker
   - name: date
   - name: startTime
+
+- kind: Session
+  ancestor: yes
+  properties:
+  - name: typeOfSession
+  - name: date
+  - name: startTime
