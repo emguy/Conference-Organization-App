@@ -12,11 +12,11 @@ This web application is deployed on the Google's Cloud Platform:
 https://emguy-122217.appspot.com
 
 ## APIs
-You can test the API server at [here][https://emguy-122217.appspot.com/_ah/api/explorer].
+You can test the API server at [here][1].
 
 ## Requirements
-1. [Python 2.7][https://python.org/download/releases/2.7/]
-2. [Google App Engine SDK for Python][https//cloud.google.com/appengine/downloads]
+1. [Python 2.7][2]
+2. [Google App Engine SDK for Python][]
 
 ## Setup Instructions
 1. In the file `app.yaml`, change the field `application` using the app ID you have created from the Google's developer console.
@@ -39,3 +39,7 @@ class Session(ndb.Model):
   startTime       = ndb.TimeProperty()
   endTime         = ndb.TimeProperty()
 ```
+
+[1] https://emguy-122217.appspot.com/_ah/api/explorer
+[2] https://python.org/download/releases/2.7/
+[3] https//cloud.google.com/appengine/downloads
