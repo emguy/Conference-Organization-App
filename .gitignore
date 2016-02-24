@@ -62,4 +62,4 @@ target/
 .ipynb_checkpoints
 
 #Json
-.json
+*.json
