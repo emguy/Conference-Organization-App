@@ -40,6 +40,6 @@ class Session(ndb.Model):
   endTime         = ndb.TimeProperty()
 ```
 
-[1] https://emguy-122217.appspot.com/_ah/api/explorer
-[2] https://python.org/download/releases/2.7/
-[3] https//cloud.google.com/appengine/downloads
+[1]: https://emguy-122217.appspot.com/_ah/api/explorer
+[2]: https://python.org/download/releases/2.7/
+[3]: https//cloud.google.com/appengine/downloads
