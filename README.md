@@ -8,6 +8,8 @@ wishlists, time issue resolution, and to allow users to return required
 searches for sessions and registered conferences.  The web frontend and the
 android frontend has been provided by Udacity.
 
-This web application is deployed on Google's Cloud Platform:
+This web application is deployed on the Google's Cloud Platform:
 https://emguy-122217.appspot.com
 
+You can test the server API from
+https://emguy-122217.appspot.com/_ah/api/explorer
