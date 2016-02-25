@@ -45,15 +45,15 @@ Here, our design choice is that we make the `Session` class as the child of the
 `Conference` class. With this approach, it is more easier to query all
 sessions in a conference.
 
-Within the `Session` class, the attribute `speaker` is defined as a string. To
+Within the `Session` class, the attribute `speaker` is declared as a string. To
 avoid the case when two speakers share the same display name, we store the
 speaker's id in this string.
 
 Similarly to the field `teeShirtSize` of the `Profile` class, the attribute
-`typeOfSession` is defined as a `enum` with limited value choices.
+`typeOfSession` is declared as a `enum` with limited value choices.
 
 In addition, instead of saving `duration` in the class, here we store the
-`endTime` of the session instead. This attribute is of the same type as
+`endTime` of the session. This attribute is of the same type as
 `startTime`. This approach simplifies the implementation of time queries for
 sessions.
 
