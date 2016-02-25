@@ -42,17 +42,47 @@ class Session(ndb.Model):
 ```
 
 Here, our design choice is that we make the `Session` class as the child of the
-`Conference` class. With this approach, it is more easier the query all
+`Conference` class. With this approach, it is more easier to query all
 sessions in a conference.
 
 Within the `Session` class, the attribute `speaker` is defined as a string. To
 avoid the case when two speakers share the same display name, we store the
 speaker's id in this string.
 
-Similarly to the field `teeShirtSize`, the attribute `typeOfSession` is
-defined as a `enum` with limited value choices.
+Similarly to the field `teeShirtSize` of the `Profile` class, the attribute
+`typeOfSession` is defined as a `enum` with limited value choices.
 
+In addition, instead of saving `duration` in the class, here we store the
+`endTime` of the session instead. This attribute is of the same type as
+`startTime`. This approach simplifies the implementation of time queries for
+sessions.
 
+## Two additional queries
+
+The following two additional queries are implemented on the API server.
+
+- `getAttenderByConference(websafeConferenceKey)` -- Given a conference, return all attenders.
+- `getAllSessionByDate(websafeConferenceKey, dateString)` -- Given a conference and a date, return all sessions on that day.
+
+## Query problem: How would you handle a query for all non-workshop sessions before 7pm?
+
+Google cloud datastore only allows ONE inequality filter for each query.
+
+One approach to solve this query problem is that we only do the query by time
+(before 7:00pm) on all sessions in the given conference as:
+
+```Python
+query_result = Session.query(ancestor=conf.key).filter(Session.endTime<=time(19, 00))
+
+```
+Then, the additional filtering on `typeOfSession` can be achieved by applying the
+following python logic
+```Python
+query_result = [session for session in query_result if session.typeOfSession != "Workshop"]
+
+```
+
+Report bugs to <emguy2000@gmail.com>.
 
 [1]: https://emguy-122217.appspot.com/_ah/api/explorer
 [2]: https://python.org/download/releases/2.7/

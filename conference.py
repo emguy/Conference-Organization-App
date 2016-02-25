@@ -220,11 +220,9 @@ class ConferenceApi(remote.Service):
     data["key"] = s_key
     # creates the Session object and put onto the cloud datastore
     Session(**data).put() 
-    logging.info("---------------------------")
     # add task to queue to update featured speaker 
     taskqueue.add(params={"websafeConferenceKey": wsck},
               url="/tasks/featured_speaker")
-    logging.info("---------------------------")
     # return the original Session Form
     return self._copySessionToForm(s_key.get())
 
@@ -883,9 +881,6 @@ class ConferenceApi(remote.Service):
         if speakersCounter[session.speaker] > num:
           featured_speaker = session.speaker
           num = speakersCounter[session.speaker] 
-    logging.info("--------------------")
-    logging.info("num = %d" % num)
-    logging.info("--------------------")
     # this is the memcache key for this conference
     memcache_key = MEMCACHE_FEATUREDSPEAKER_KEY % wsck
     msg = "N/A"
@@ -893,9 +888,6 @@ class ConferenceApi(remote.Service):
       # get the name of the featured speaker
       speakerKey = ndb.Key(Profile, featured_speaker)
       speakerName = speakerKey.get().displayName 
-      logging.info("--------------------")
-      logging.info("name = %s" % speakerName)
-      logging.info("--------------------")
       # the display message also includes the count info
       msg = "%s (%d)" % (speakerName, num,)
       # store the featured speaker in memcache
