@@ -16,7 +16,7 @@ You can test the API server at [here][1].
 
 ## Requirements
 1. [Python 2.7][2]
-2. [Google App Engine SDK for Python][]
+2. [Google App Engine SDK for Python][3]
 
 ## Setup Instructions
 1. In the file `app.yaml`, change the field `application` using the app ID you have created from the Google's developer console.
