@@ -70,8 +70,8 @@ query_result = Profile.query(Profile.conferenceKeysToAttend.IN([websafeConferenc
 - `getAllSessionByDate(websafeConferenceKey, dateString)` -- Given a conference and a date, return all sessions on that day.
 
 ```Python
-query_result = Session.query(ancestor=c_key)
-query_result = query_result.filter(Session.date==datetime.strptime(request.date, "%Y-%m-%d").date())
+queryResult = Session.query(ancestor=c_key)
+queryResult = query_result.filter(Session.date==datetime.strptime(request.date, "%Y-%m-%d").date())
 ```
 
 ## Query problem: How would you handle a query for all non-workshop sessions before 7pm?
@@ -82,13 +82,13 @@ One approach to solve this query problem is that we only do the query by time
 (before 7:00pm) on all sessions in the given conference as:
 
 ```Python
-query_result = Session.query(ancestor=conf.key).filter(Session.endTime<=time(19, 00))
+queryResult = Session.query(ancestor=conf.key).filter(Session.endTime<=time(19, 00))
 
 ```
 Then, the additional filtering on `typeOfSession` can be achieved by applying the
 following python logic:
 ```Python
-query_result = [session for session in query_result if session.typeOfSession != "Workshop"]
+queryResult = [session for session in query_result if session.typeOfSession != "Workshop"]
 
 ```
 
