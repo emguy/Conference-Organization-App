@@ -19,6 +19,7 @@ from google.appengine.api import taskqueue
 from models import Profile
 from models import ProfileMiniForm
 from models import ProfileForm
+from models import ProfileForms
 from models import TeeShirtSize
 from models import Session
 from models import SessionForm
@@ -33,7 +34,7 @@ from models import ConflictException
 from models import StringMessage
 from models import SessionType
 
-from datetime import datetime, time
+from datetime import datetime, date, time
 from settings import WEB_CLIENT_ID
 from  utils import getUserId
 
@@ -83,6 +84,11 @@ CONF_POST_REQUEST = endpoints.ResourceContainer(
 SESSION_GET_REQUEST = endpoints.ResourceContainer(
   message_types.VoidMessage,
   websafeConferenceKey = messages.StringField(1),
+)
+SESSION_DATE_GET_REQUEST = endpoints.ResourceContainer(
+  message_types.VoidMessage,
+  websafeConferenceKey = messages.StringField(1),
+  date = messages.StringField(2),
 )
 SESSION_CREATE_REQUEST = endpoints.ResourceContainer(
   SessionForm,
@@ -923,6 +929,58 @@ class ConferenceApi(remote.Service):
     # this is the resultant memcache key
     memcache_key = MEMCACHE_FEATUREDSPEAKER_KEY % wsck
     return StringMessage(data=memcache.get(memcache_key) or "N/A")
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#
+#       Additional queries
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  #----------------------------------------------------------
+  # API: Query for all registered users in the specified conference.
+  #----------------------------------------------------------
+  @endpoints.method(CONF_GET_REQUEST, ProfileForms,
+          path="conference/{websafeConferenceKey}/attenders",
+          http_method="GET", name="getAttenderByConference")
+  def getAttenderByConference(self, request):
+    """ Query for all registered users in a specified conference. """
+    # get Conference object from request; bail if not found
+    wsck = request.websafeConferenceKey
+    c_key = ndb.Key(urlsafe=wsck)
+    if not c_key.get():
+      raise endpoints.NotFoundException(
+        "No conference found with key: %s" % request.websafeConferenceKey)
+    # apply the filter
+    query_result = Profile.query(Profile.conferenceKeysToAttend.IN([wsck,]))
+    # return the ProfileForms
+    return ProfileForms(
+        items=[self._copyProfileToForm(pf) for pf in query_result]
+    )
+
+  #----------------------------------------------------------
+  # API: query all sessions in a conference on a given date
+  #----------------------------------------------------------
+  @endpoints.method(SESSION_DATE_GET_REQUEST, SessionForms,
+          path="conference/{websafeConferenceKey}/all_sessions/{date}",
+          http_method="POST", name="getAllSessionsByDate")
+  def getAllSessionsByDate(self, request):
+    """ Query all sessions in a conference on a given date. """
+    # check if conf exists given websafeConfKey
+    wsck = request.websafeConferenceKey
+    c_key = ndb.Key(urlsafe=wsck)
+    conf = c_key.get()
+    # check that conference exists
+    if not conf:
+      raise endpoints.NotFoundException(
+        "No conference found with key: %s" % wsck)
+    # create ancestor query for this conference
+    query_result = Session.query(ancestor=c_key)
+    # apply the filter using date
+    query_result = query_result.filter(\
+         Session.date==datetime.strptime(request.date[:10], "%Y-%m-%d").date())
+    # return set of SessionForm objects per Session
+    return SessionForms(
+      items=[self._copySessionToForm(session) for session in query_result]
+    )
  
 # registers API
 api = endpoints.api_server([ConferenceApi]) 

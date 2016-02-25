@@ -62,7 +62,17 @@ sessions.
 The following two additional queries are implemented on the API server.
 
 - `getAttenderByConference(websafeConferenceKey)` -- Given a conference, return all attenders.
+
+```Python
+query_result = Profile.query(Profile.conferenceKeysToAttend.IN([websafeConferenceKey,]))
+```
+
 - `getAllSessionByDate(websafeConferenceKey, dateString)` -- Given a conference and a date, return all sessions on that day.
+
+```Python
+query_result = Session.query(ancestor=c_key)
+query_result = query_result.filter(Session.date==datetime.strptime(request.date, "%Y-%m-%d").date())
+```
 
 ## Query problem: How would you handle a query for all non-workshop sessions before 7pm?
 
@@ -76,7 +86,7 @@ query_result = Session.query(ancestor=conf.key).filter(Session.endTime<=time(19,
 
 ```
 Then, the additional filtering on `typeOfSession` can be achieved by applying the
-following python logic
+following python logic:
 ```Python
 query_result = [session for session in query_result if session.typeOfSession != "Workshop"]
 

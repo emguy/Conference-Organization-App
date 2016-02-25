@@ -128,6 +128,10 @@ class ConferenceForms(messages.Message):
   """ConferenceForms -- multiple Conference outbound form message"""
   items = messages.MessageField(ConferenceForm, 1, repeated=True)
 
+class ProfileForms(messages.Message):
+  """ConferenceForms -- multiple Conference outbound form message"""
+  items = messages.MessageField(ProfileForm, 1, repeated=True)
+
 class ConferenceQueryForm(messages.Message):
   """ConferenceQueryForm -- Conference query inbound form message"""
   field = messages.StringField(1)
