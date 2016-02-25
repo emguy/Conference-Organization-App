@@ -64,7 +64,7 @@ The following two additional queries are implemented on the API server.
 - `getAttenderByConference(websafeConferenceKey)` -- Given a conference, return all attenders.
 
 ```Python
-query_result = Profile.query(Profile.conferenceKeysToAttend.IN([websafeConferenceKey,]))
+queryResult = Profile.query(Profile.conferenceKeysToAttend.IN([websafeConferenceKey,]))
 ```
 
 - `getAllSessionByDate(websafeConferenceKey, dateString)` -- Given a conference and a date, return all sessions on that day.
