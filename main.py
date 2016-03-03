@@ -4,7 +4,7 @@ from google.appengine.api import app_identity
 from google.appengine.api import mail
 from conference import ConferenceApi
 
-class setFeatureSpeakerHandler(webapp2.RequestHandler)
+class setFeatureSpeakerHandler(webapp2.RequestHandler):
   """ Set/update the feature speaker of a conference in Memcache. """
   def post(self):
     wsck = self.request.get("websafeConferenceKey")

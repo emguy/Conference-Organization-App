@@ -46,8 +46,8 @@ Here, our design choice is that we make the `Session` class as the child of the
 sessions in a conference.
 
 Within the `Session` class, the attribute `speaker` is declared as a string. To
-avoid the case when two speakers share the same display name, we store the
-speaker's id in this string.
+avoid the case when two speakers share the same display name, we store the id
+of the speaker's google+ accont in this string.
 
 Similarly to the field `teeShirtSize` of the `Profile` class, the attribute
 `typeOfSession` is declared as a `enum` with limited value choices.
