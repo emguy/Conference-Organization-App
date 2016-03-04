@@ -56,6 +56,8 @@ This statement is factual incorrect
 Google cloud datastore only allows ONE inequality filter for each query.
 ```
 
+I have revised this statement to the following.
+
 Google cloud datastore only allows at most one property to be applied with
 inequality filters.
 
@@ -124,8 +126,8 @@ which time queries are you referring to ? could you point out the examples you
 implemented making use of endTime beyond the solution suggested in this readme.
 ```
 
-In task 3, we were asked to query for sessions before 7pm (this could be end
-time). 
+In task 3, we were asked to query for sessions before 7pm (here `7pm` could be the
+end time). 
 
 #### 3
 ```
