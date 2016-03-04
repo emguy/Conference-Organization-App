@@ -76,7 +76,8 @@ queryResult = query_result.filter(Session.date==datetime.strptime(request.date, 
 
 ## Query problem: How would you handle a query for all non-workshop sessions before 7pm?
 
-Google cloud datastore only allows ONE inequality filter for each query.
+Google cloud datastore only allows at most one property to be applied with
+inequality filters.
 
 One approach to solve this query problem is that we only do the query by time
 (before 7:00pm) on all sessions in the given conference as:

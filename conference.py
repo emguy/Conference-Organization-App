@@ -55,7 +55,7 @@ DEFAULTS = {
 # it is only been used in _createSessionObject()
 SESSION_DEFAULTS = {
     "duration": 60,
-    "typeOfSession": ["NOT_SPECIFIED"],
+    "typeOfSession": "NOT_SPECIFIED",
 }
 
 
@@ -68,7 +68,6 @@ OPERATORS = {
             "LTEQ": "<=",
             "NE":   "!="
             }
-
 
 
 # query fields
@@ -155,8 +154,15 @@ class ConferenceApi(remote.Service):
     date = getattr(session, "date")
     startTime = getattr(session, "startTime")
     endTime = getattr(session, "endTime")
-    duration = (endTime.hour * 60 + endTime.minute) \
-              - (startTime.hour * 60 + startTime.minute) 
+
+    # copy duration
+    if startTime and endTime:
+      duration = (endTime.hour * 60 + endTime.minute) \
+                - (startTime.hour * 60 + startTime.minute) 
+    else:
+      duration = 0
+
+    # copy other fields
     setattr(sf, "name", getattr(session, "name"))
     setattr(sf, "highlights", getattr(session, "highlights"))
     setattr(sf, "typeOfSession", getattr(SessionType, getattr(session, "typeOfSession")))
@@ -164,7 +170,7 @@ class ConferenceApi(remote.Service):
     setattr(sf, "date", str(date))
     setattr(sf, "startTime", str(startTime))
     setattr(sf, "duration", duration)
-    setattr(sf, "wssk", session.key.urlsafe()) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< for testing
+    setattr(sf, "wssk", session.key.urlsafe()) 
     sf.check_initialized()
     return sf
 
@@ -202,8 +208,8 @@ class ConferenceApi(remote.Service):
     # add default values for those missing (both data model & outbound Message)
     for df in SESSION_DEFAULTS:
       if data[df] in (None, []):
-        data[df] = DEFAULTS[df]
-        setattr(request, df, DEFAULTS[df])
+        data[df] = SESSION_DEFAULTS[df]
+        #setattr(request, df, SESSION_DEFAULTS[df])
 
     # convert sessionType from enum to string
     if data["typeOfSession"]: 
@@ -250,7 +256,7 @@ class ConferenceApi(remote.Service):
 
     # add task to queue to update featured speaker 
     taskqueue.add(params={"websafeConferenceKey": wsck},
-              url="/tasks/featured_speaker")
+              url="/tasks/set_featured_speaker")
 
     # return the original Session Form
     return self._copySessionToForm(s_key.get())
@@ -328,7 +334,7 @@ class ConferenceApi(remote.Service):
 
 
   #----------------------------------------------------------
-  # API: query all sessions for a given type  in a conference 
+  # API: query all sessions for a given type in a conference 
   #----------------------------------------------------------
   @endpoints.method(SESSION_TYPE_GET_REQUEST, SessionForms,
           path="conference/{websafeConferenceKey}/{typeOfSession}",
@@ -1044,8 +1050,12 @@ class ConferenceApi(remote.Service):
       speakerKey = ndb.Key(Profile, featured_speaker)
       speakerName = speakerKey.get().displayName 
 
-      # the display message also includes the count info
-      msg = "%s (%d)" % (speakerName, num,)
+      # get all sessions by this speaker through additional filtering
+      sessions = sessions.filter(Session.speaker == featured_speaker)
+
+      # construct the cached message
+      session_names = ", ".join([session.name for session in sessions])
+      msg = "%s (%s)" % (speakerName, session_names)
 
       # store the featured speaker in memcache
       memcache.set(memcache_key, msg)
@@ -1103,7 +1113,8 @@ class ConferenceApi(remote.Service):
           path="conference/{websafeConferenceKey}/attenders",
           http_method="GET", name="getAttenderByConference")
   def getAttenderByConference(self, request):
-    """ Query for all registered users in a specified conference. (This query is only open to conference organizer) """
+    """ Query for all registered users in a specified conference. (This query
+        is only open to conference organizer) """
     # make sure that the user is authed
     user = endpoints.get_current_user()
     if not user:
@@ -1139,8 +1150,8 @@ class ConferenceApi(remote.Service):
   #----------------------------------------------------------
   @endpoints.method(SESSION_DATE_GET_REQUEST, SessionForms,
           path="conference/{websafeConferenceKey}/all_sessions/{date}",
-          http_method="POST", name="getAllSessionsByDate")
-  def getAllSessionsByDate(self, request):
+          http_method="POST", name="getConferenceSessionsByDate")
+  def getConferenceSessionsByDate(self, request):
     """ Query all sessions in a conference on a given date. """
     # get the conference model
     wsck = request.websafeConferenceKey
@@ -1164,6 +1175,8 @@ class ConferenceApi(remote.Service):
       items=[self._copySessionToForm(session) for session in query_result]
     )
  
+
+
 # registers API
 api = endpoints.api_server([ConferenceApi]) 
 
